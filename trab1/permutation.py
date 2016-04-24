@@ -19,18 +19,18 @@ class permutation:
             self.permutation={ i:i for i in range(self.maxsize)}
       
         if permutation is not None:
-            method_name = "__init_from_" + type(permutation).__name__
+            method_name = "_init_from_" + permutation.__class__.__name__
             method = getattr(self,method_name)
             self.permutation=method(permutation)
 
-    def __init_from_list(self,_list):
-        l=_list+[_list[0]]
+    def _init_from_list(self,_list):
+        _l=_list[:]+[_list[0]]
         p={}
         for i in range(len(_list)):
-            p[_list[i]]=_list[i+1]
+            p[_l[i]]=_l[i+1]
         return p
 
-    def __init_from_dict(self,_dict):
+    def _init_from_dict(self,_dict):
         p={}
         for k,v in _dict.iteritems():
             p[k]=v
@@ -43,21 +43,40 @@ class permutation:
         return self.permutation.get(index,index)
 
     def __call__(self,_other):
-        method_name = "_do_" + type(_other).__name__
+        method_name = "_do_" + _other.__class__.__name__
         method = getattr(self,method_name)
         return method(_other)
 
-    def __do_list(self,_list):
+    def _do_list(self,_list):
+        if len(_list) != self.maxsize:
+            raise Exception("size mismatch")
         s=_list[:]
         for k,v in self.permutation.iteritems():
             s[v]=_list[k]
         return s
 
-    def __do_dict(self,_dict):
-        d=_dict.copy()
+    def _do_permutation(self,_p):
+        if _p.maxsize != self.maxsize:
+            raise Exception("size mismatch")
+        s=_p.permutation.copy()
         for k,v in self.permutation.iteritems():
-            d[k]=_dict[v]
-        return d
+            s[v]=_p[k]
+        return permutation(self.maxsize,s)
+
+    def collapse(self):
+        for i in range(self.maxsize):
+            if self.permutation[i]==i:
+                del self.permutation[i]
+
+    def expand(self):
+        for i in range(self.maxsize):
+            if i not in self.permutation:
+                self.permutation[i]=i
+
+    def __eq__(self,other):
+        if self.maxsize != other.maxsize:
+            return False
+        return all([self[i]==other[i] for i in range(self.maxsize)])
 
 if __name__ == '__main__':
   import doctest
