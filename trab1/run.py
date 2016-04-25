@@ -62,9 +62,5 @@ for s in ["id" ] + shakes1.keys():
 print "best order: " + str(instance.order())
 print "best cost: %d" % instance.cost()    
 
-print "cost: %d" % instance.cost([3,2,0,1]) 
-print "cost: %d" % instance.cost([2,3,0,1]) 
-print "cost: %d" % instance.cost([2,0,3,1]) 
-print "cost: %d" % instance.cost([2,0,1,3]) 
 
     
