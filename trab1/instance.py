@@ -19,7 +19,25 @@ class instance:
         self._data = [ map(int,line.split()) for line in self._file ]
         self._file.close()
         self._order = [i for i in range(self._size)]
-    
+        num_elements = 0
+        elements = []
+        for i in range(self._size):
+            for j in range(self._size):
+                if i==j:
+                    continue
+                if self._data[i][j]>0:
+                    num_elements +=1
+                    elements.append(self._data[i][j])
+        elements.sort()
+        if num_elements < self._size*self._size/2:
+            self._hipotetical_cost = elements[0]
+        else:
+            k = num_elements - self._size*self._size/2
+            self._hipotetical_cost = sum(elements[0:k])
+
+    def hipotetical_cost(self):
+        return self._hipotetical_cost
+
     def __getitem__(self,index):
         return self.data[index]
 
@@ -32,11 +50,11 @@ class instance:
         if order is None:
             order=self._order
         c = 0
-        for i in range(1,self._size-1):
+        for i in range(1,self._size):
             o_i = order[i]
-            for j in range(i,self._size):
+            for j in range(0,i+1):
                 o_j = order[j]
-                c+=self._data[o_i][o_j]
+                c = c + self._data[o_i][o_j]
         return c
 
     def size(self):
