@@ -30,10 +30,10 @@ print "hipotetical minimal: %d" % hipotetical_cost
 best_order = instance.order()
 best_cost = instance.cost() 
 
-for s in ["id" ] + shakes1.keys() ++ shakes2.keys:
+for s in ["id" ] + shakes1.keys():
     if s != "id":
-        print s
-        shaked_order = shakes[s](instance.order())
+        print "shaking: %s" % s 
+        shaked_order = shakes1[s](instance.order())
         instance.order(shaked_order)
     local_minima = False
     while local_minima is False:
