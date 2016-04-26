@@ -27,12 +27,12 @@ class instance:
                     continue
                 if self._data[i][j]>0:
                     num_elements +=1
-                    elements.append(self._data[i][j])
+                elements.append(self._data[i][j])
         elements.sort()
-        if num_elements < self._size*self._size/2:
+        if num_elements < self._size*(self._size-1)/2:
             self._hipotetical_cost = elements[0]
         else:
-            k = num_elements - self._size*self._size/2
+            k = num_elements - self._size*(self._size-1)/2
             self._hipotetical_cost = sum(elements[0:k])
 
     def hipotetical_cost(self):
@@ -49,6 +49,9 @@ class instance:
     def cost(self,order=None):
         if order is None:
             order=self._order
+
+        if order.__class__.__name__ is 'permutation':
+            return self._do_cost_permutation(dict)
         c = 0
         for i in range(1,self._size):
             o_i = order[i]
@@ -57,6 +60,38 @@ class instance:
                 c = c + self._data[o_i][o_j]
         return c
 
+    def _do_cost_permutation(self,perm):
+        perm.collapse()
+        if len(perm.permutation) == 2 :
+            return self._do_cost_permutation_quick(perm)
+        
+        
+    def _do_cost_permutation_quick(self,perm):
+        k = perm.permutation.keys().sort()
+        i = k[0]
+        j = k[1]
+        return self._data[i][j] - self._data[j][i] 
+
+    def becker_order(self):
+        order = []
+        q={}
+        for i in range(self._size):
+            _upper=0
+            _down=0
+            for j in range(self._size):
+                _upper = _upper + self._data[i][j]
+                _down = _down + self._data[j][i]
+            q[i] = (_upper+1)/(_down+1)
+        while(len(q)>0):
+            i_max = q.keys()[0]
+            for i in range(len(q)):
+                if i not in q.keys(): continue
+                if q[i] > q[i_max]:
+                    i_max=i
+            order.append(i_max)
+            del q[i_max]
+        return order
+                
     def size(self):
         return self._size
     

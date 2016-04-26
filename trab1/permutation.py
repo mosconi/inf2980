@@ -63,6 +63,10 @@ class permutation:
             s[v]=_p[k]
         return permutation(self.maxsize,s)
 
+    def dict(self):
+        self.collapse();
+        return self.permutation.copy()
+    
     def collapse(self):
         for i in range(self.maxsize):
             if self.permutation[i]==i:
