@@ -21,19 +21,21 @@ class instance:
         self._order = [i for i in range(self._size)]
         num_elements = 0
         elements = []
+        s = 0
         for i in range(self._size):
             for j in range(self._size):
                 if i==j:
-                    continue
+                    self._data[i][j]=0
                 if self._data[i][j]>0:
-                    num_elements +=1
+                    s = s+ self._data[i][j]
+                    num_elements = num_elements +1
                 elements.append(self._data[i][j])
         elements.sort()
-        if num_elements < self._size*(self._size-1)/2:
-            self._hipotetical_cost = elements[0]
+        k = num_elements - self._size*(self._size-1)/2
+        if k < 0:
+            self._hipotetical_cost = s
         else:
-            k = num_elements - self._size*(self._size-1)/2
-            self._hipotetical_cost = sum(elements[0:k])
+            self._hipotetical_cost = sum(elements[k:])
 
     def hipotetical_cost(self):
         return self._hipotetical_cost
@@ -53,9 +55,9 @@ class instance:
         if order.__class__.__name__ is 'permutation':
             return self._do_cost_permutation(dict)
         c = 0
-        for i in range(1,self._size):
+        for i in range(self._size-1):
             o_i = order[i]
-            for j in range(0,i+1):
+            for j in range(i+1,self._size):
                 o_j = order[j]
                 c = c + self._data[o_i][o_j]
         return c
