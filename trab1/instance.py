@@ -1,6 +1,6 @@
 
 
-class instance:
+class Instance:
     def __init__(self,filename,compressed=None):
         self.filename = filename
         self.compressed=compressed
@@ -52,8 +52,6 @@ class instance:
         if order is None:
             order=self._order
 
-        if order.__class__.__name__ is 'permutation':
-            return self._do_cost_permutation(dict)
         c = 0
         for i in range(self._size-1):
             o_i = order[i]
@@ -62,20 +60,26 @@ class instance:
                 c = c + self._data[o_i][o_j]
         return c
 
-    def _do_cost_permutation(self,perm):
+    def deltacost(self,order):
+        if order.__class__.__name__ is 'Permutation':
+            return self._do_deltacost_permutation(order)
+        
+    def _do_deltacost_permutation(self,perm):
         perm.collapse()
         if len(perm.permutation) == 2 :
-            return self._do_cost_permutation_quick(perm)
+            return self._do_deltacost_permutation_quick(perm)
         
         
-    def _do_cost_permutation_quick(self,perm):
-        k = perm.permutation.keys().sort()
+    def _do_deltacost_permutation_quick(self,perm):
+        k = perm.permutation.keys()
+        k.sort()
         i = k[0]
         j = k[1]
-        return self._data[i][j] - self._data[j][i] 
+        oi=self._order[i]
+        oj=self._order[j]
+        return self._data[oj][oi] - self._data[oi][oj] 
 
     def becker_order(self):
-        order = []
         q={}
         for i in range(self._size):
             _upper=0
@@ -84,14 +88,7 @@ class instance:
                 _upper = _upper + self._data[i][j]
                 _down = _down + self._data[j][i]
             q[i] = (_upper+1)/(_down+1)
-        while(len(q)>0):
-            i_max = q.keys()[0]
-            for i in range(len(q)):
-                if i not in q.keys(): continue
-                if q[i] > q[i_max]:
-                    i_max=i
-            order.append(i_max)
-            del q[i_max]
+        order = sorted(q, key = q.get,reverse = True)
         return order
                 
     def size(self):

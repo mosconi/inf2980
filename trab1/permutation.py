@@ -3,15 +3,13 @@
 
 """
 
-class permutation:
+class Permutation:
     def __init__(self,size,permutation=None,complete=False):
         """
         Cria um elemento de permutacao
 
         Argumentos: 
         size -- Informa
-        rcycle -- 
-        rcycle -- 
         """
         self.permutation={}
         self.maxsize=size
@@ -69,8 +67,9 @@ class permutation:
     
     def collapse(self):
         for i in range(self.maxsize):
-            if self.permutation[i]==i:
-                del self.permutation[i]
+            if self.permutation.has_key(i):
+                if self.permutation[i]==i:
+                    del self.permutation[i]
 
     def expand(self):
         for i in range(self.maxsize):
