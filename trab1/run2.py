@@ -79,7 +79,10 @@ for o,a in opts:
     if o == "-d": _debug=1
     else:
         assert False, "opcao desconhecida"
-        
+
+if len(sys.argv)==1:
+    sys.exit("precisa passar a instancia")
+
 for argv in sys.argv[1:]:
     _ls_runs=0
     _ils_runs=0
@@ -173,5 +176,3 @@ for argv in sys.argv[1:]:
 
     del(_instance)
 
-else:
-    sys.exit("precisa passar a instancia")
