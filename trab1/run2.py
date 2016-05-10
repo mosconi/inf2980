@@ -3,7 +3,7 @@ from instance import Instance
 from permutation import Permutation
 from math import floor
 
-import sys, random, getopt
+import sys, random, getopt, time
 
 permutations = [] 
 shakes = []
