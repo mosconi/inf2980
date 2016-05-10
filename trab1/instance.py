@@ -104,6 +104,17 @@ class instance:
         import bz2
         return bz2.BZ2File(self.filename, "rU")
 
+    def __getstate__(self):
+        odict={}
+        odict['_data'] = self._data
+        odict['_order'] = self._order
+        odict['_size'] = self._size
+        return odict
+
+    def __setstate__(self,dict):
+        self.__dict__.update(dict)
+
+
 if __name__ == '__main__':
     import doctest
     doctest.testmod()
