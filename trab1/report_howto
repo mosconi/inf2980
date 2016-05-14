@@ -1,0 +1,42 @@
+What makes a good experimental analysis
+- what you want to analyze and show
+• Comparative performance analysis
+• Contributions of main building blocks of your method (parameters; complements and design choice l)
+• Analysis of scope: in which conditions this method or component is better
+
+- how to report
+• Experimental context (CPU, language, OS, number of runs, ...)
+• Benchmark Instances
+• Fair comparison with other methods
+|_ Compare in similar time (average time on the data set is comparable [,1.2]x as previous authors; if not the case, modify termination criterion), number of iterations, number of function evaluations;
+|_ Consider CPU speed; Number of CPUs; c reported results on a PI 300MHz and Xeon 3.07GHz; specifications for CPUs, Dongona; Multiply by number of CPUs to compute overall effort
+• Calibration of the parameters
+|_ Manual Calibration
+    |_ One factor at a time
+    |_ REVAC
+    |_ Metacalibration approach
+    |_ Solution Quality vs CPU time
+• Investigation of the impact of the method components/design choices/parameters
+• Investigation of the scope of the application:"
+|_ What characteristics of the problems are good/hard for your method
+
+- how to illustrate/confirm your observations
+• Statistical Tests
+|_ Obvious...
+|_ If not
+     |_ 2 methods
+     |_ Wilcoxon Paired = Samples Test
+=> Equality of Variance X --- Friedman test with Post-hoc
+=> Normality X
+=> ANOVA X
+     |_ K methods
+1. Do Wilcoxon
+2. Choose your best method
+3. Run again the comp. or post hoc connection factor or your tests
+• Box plot of Time Gap%
+|_ for subsets of instances with different characteristics
+• Curve representing the average
+• Cumulative distribution: on how many instances we achieved a solution quality better than X%
+• Time to target: CPU time needed to reach solution within X%
+• Distribution of Search Effort
+- how to conclude

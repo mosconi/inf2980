@@ -1,0 +1,109 @@
+\documentclass[a4paper,10pt,twocolumn]{article}
+
+\usepackage{url}
+\usepackage{amsmath} 
+\usepackage{amsthm} 
+\usepackage{amssymb}
+\usepackage[utf8]{inputenc}
+\usepackage[brazil]{babel}
+\usepackage{graphicx}
+\usepackage{tikz}
+\usepackage{tkz-graph}
+\usetikzlibrary{matrix,arrows,decorations.pathmorphing}
+
+\usepackage{listings}
+
+\lstset{
+  language=Python,
+  basicstyle=\footnotesize,
+  otherkeywords={self},
+  captionpos=t,
+  extendedchars=true, 
+  frame=single,	  
+  tabsize=4,	    
+  title=\lstname,
+  showstringspaces=false  
+}
+
+
+\newtheorem{defi}{Definição} 
+\newtheorem{axioma}{Axioma}
+\newtheorem{post}{Postulado} 
+\newtheorem{prop}{Proposição}
+\newtheorem{propri}{Propriedade}
+\newtheorem{lem}{Lema} 
+\newtheorem{theo}{Teorema}
+
+\author{Rodrigo Mosconi}
+\title{Linear order problem}
+\date{16 de Maio de 2016}
+
+\makeindex
+\begin{document}
+
+\maketitle
+\tableofcontents
+
+\section{Problema}
+\section{Modelagem do problema}
+\subsection{Teoria de grupos de permutações}
+Um grupo é caracterizado como um conjunto $G$ de elementos e uma operação
+fechada entre
+estes elementos:
+
+\begin{align*}
+  G \times G & \rightarrow G \\
+  (a,b) & \mapsto a \cdot b
+\end{align*}
+
+  Este par de conjunto e operação deve satisfazer as
+propriedades:
+\begin{enumerate}
+\item A operação é associativa:\\
+  $$ a \cdot ( b \cdot c) = ( a \cdot b) \cdot c \qquad \forall a,b,c \in G$$
+\item Existe um e elemento neutro:\\
+  $$ \exists e \in G, \textrm{ tal que }\, e \cdot a = a \cdot e = a \qquad \forall a \in G $$
+\item Todo elemento possui um elemento inverso:\\
+  $$ \forall a \in G, \exists b \in G,\textrm{ tal que }\, a \cdot b = b \cdot a = e $$
+\end{enumerate}
+
+Das propriedades anteriores, pode-se deduzir que o elemento neutro é único e o
+elemento 
+inverso de $a \in G$ também é único.  O inverso de $a$ será denotado por $a^{-1}$.
+
+\section{Heurísticas}
+\subsection{Local Search}
+\subsection{Iterated Local Search}
+\section{Experimentos}
+\section{Resultados}
+\section{Conclusão}
+
+\begin{thebibliography}{99}
+\bibitem{materialaula}
+  Thibaut Vidal,
+  \emph{Material de Aula},
+  2016
+\bibitem{sakuraba2010}
+ Celso S. Sakuraba and Mutsunori Yagiura,
+ \emph{Efficient local search algorithms for the linear
+ordering problem},
+ International Transactions In Operational Research,
+ 2010
+
+\bibitem{tommaso}
+  Tommaso Schiavinotto and Thomas Stützle,
+  \emph{The Linear Ordering Problem: Instances, Search
+Space Analysis and Algorithms},
+  Journal of Mathematical Modelling and Algorithms,
+  2004
+
+\bibitem{algebra}
+  Arnaldo Garcia and Yves Lequain,
+  \emph{Elementos de Álgebra},
+  IMPA,
+  2005
+
+
+\end{thebibliography}
+
+\end{document}
