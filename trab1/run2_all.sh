@@ -7,7 +7,7 @@ for i in N*.bz2 n*.bz2; do
        echo -n " $j"
        [ -f ../results/${i}.output_2_${j} ] && continue
        python2.7 ../run2.py ${i} > ${i}.output_2_${j}
-       mv ${i}.output_2_${j} results/
+       mv ${i}.output_2_${j} ../results/
     done
     echo " done"
 done
