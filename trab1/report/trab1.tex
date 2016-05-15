@@ -1,4 +1,4 @@
-\documentclass[a4paper,10pt,twocolumn]{article}
+\documentclass[a4paper,10pt,onecolumn]{article}
 
 \usepackage{url}
 \usepackage{amsmath} 
@@ -10,6 +10,9 @@
 \usepackage{tikz}
 \usepackage{tkz-graph}
 \usetikzlibrary{matrix,arrows,decorations.pathmorphing}
+\usepackage{pdflscape}
+\usepackage{afterpage}
+\usepackage{tabularx}
 
 \usepackage{listings}
 
@@ -35,7 +38,7 @@
 \newtheorem{theo}{Teorema}
 
 \author{Rodrigo Mosconi}
-\title{Linear order problem}
+\title{Linear Ordering Problem}
 \date{16 de Maio de 2016}
 
 \makeindex
@@ -45,19 +48,49 @@
 \tableofcontents
 
 \section{Problema}
-\section{Modelagem do problema}
-\subsection{Teoria de grupos de permutações}
-Um grupo é caracterizado como um conjunto $G$ de elementos e uma operação
-fechada entre
-estes elementos:
 
-\begin{align*}
-  G \times G & \rightarrow G \\
-  (a,b) & \mapsto a \cdot b
+O problema de ordenação linear de um grafo direcionado $G=(V,E)$, sendo $V$ o
+conjunto dos vértices e $E \subseteq V\times V$ o conjunto de arestas $(i,j)$
+direcionadas de com custo $c_{ij}$, consiste em determinar uma permutação da
+ordem dos vértices que maximize o custo das arestas diretas, ou não-reversas.
+
+\section{Modelagem do problema}
+
+O modelo para resolver este problema usa as seguintes premissas:
+\begin{enumerate}
+\item Toda aresta $(i,j)$ existente possui custo $c_{ij}>0$
+\item As arestas não existentes possuem custo $0$
+\item Não existe auto arestas, isto é, não existe arestas $(i,i)$
+\end{enumerate}
+
+Observando o problema sob a ótica da teoria de grupos, em especial, os grupos
+de permutações $S_n$, onde $n$ é o número de vértices, é possível,
+matematicamente, mapear a relação entre todos as permutações possíveis.
+Entretanto, computacionalmente, pode não ser possível explorar todos as $n!$
+permutações.  
+
+Neste problema serão utilizadas heurísticas visando obter a melhor solução
+possível e uma das premissas para as heurísticas é uma restrição na área de
+procura.
+
+A função objetivo associada ao  grafo $G=(V,E)$, em uma determinada ordem $\pi$:
+
+\begin{equation}
+  f(\pi)=\sum^n_{i=1}\sum^n_{j=i+1}c_{\pi_i\pi_j}
+\end{equation}
+
+Esta função é a soma do triangulo superior de uma matrz quadrada $n\times n$
+dos custos associados das arestas.
+
+\subsection{Teoria de grupos de permutações}
+
+Um grupo $(G,\cdot)$ é caracterizado como um conjunto $G$ de elementos e uma
+operação $\cdot$ fechada entre estes elementos:
+
+\begin{align*} G \times G & \rightarrow G \\ (a,b) & \mapsto a \cdot b
 \end{align*}
 
-  Este par de conjunto e operação deve satisfazer as
-propriedades:
+  Este par de conjunto e operação deve satisfazer as propriedades:
 \begin{enumerate}
 \item A operação é associativa:\\
   $$ a \cdot ( b \cdot c) = ( a \cdot b) \cdot c \qquad \forall a,b,c \in G$$
@@ -67,43 +100,258 @@ propriedades:
   $$ \forall a \in G, \exists b \in G,\textrm{ tal que }\, a \cdot b = b \cdot a = e $$
 \end{enumerate}
 
+Quando não houver ambiguidade, o grupo $(G,\cdot)$ será denotado apenas por
+$G$ e a operação $a\cdot b$ será denotada por $ab$.
+
 Das propriedades anteriores, pode-se deduzir que o elemento neutro é único e o
-elemento 
-inverso de $a \in G$ também é único.  O inverso de $a$ será denotado por $a^{-1}$.
+elemento inverso de $a \in G$ também é único.  O inverso de $a$ será denotado
+por $a^{-1}$.
+
+Um subconjunto $H$ de $G$ é um subgrupo de $(G,\cdot)$, denotado por $H < G$,
+se também é grupo $(H,\cdot)$, sendo $\cdot$ a mesma operação.
+
+Defini-se como \emph{ordem} de um grupo $G$ como o números de elementos em
+$G$.  De forma análoga, a orderm de um subgrupo $H$ é o número de elementos de $H$.
+
+Um grupo de permutações é definido como um grupo composto por um conjunto de
+funções $Bij(C) = \{ f:C \rightarrow C| f \textrm{ é bijeção}\}$, sendo $C$
+finito com $n$ elementos. A operação do grupo é a composição de funções
+$\circ$.  Este grupo será denotado por $S_n$, e também é chamado de grupo
+simétrico. A ordem deste grupo é $n!$.
+
+Os elementos do conjunto do grupo $S_n$ podem ser representados na forma:
+
+\begin{displaymath} \sigma= \bigl(
+    \begin{smallmatrix} 1 & 2& 3& \cdots &n-1 &n \\ f(1) & f(2)& f(3)& \cdots
+&f(n-1) &f(n) \\
+    \end{smallmatrix} \bigr)
+\end{displaymath}
+
+Um elemento $\sigma$ é chamado de \emph{r-ciclo} de existem elementos
+distintos $a_1,a_2,a_3,\dots,a_r \in \{1,2,3,\dots, n\}$ tais que:
+\begin{enumerate}
+\item{$\sigma(a_i) = a_{i+1}$ para $1 \leq i < r$;}
+\item{$\sigma(a_r) = a_1$}
+\item{$\sigma(b)=b$ para $b \in \{1,2,3,\dots, n\} \setminus
+\{a_1,a_2,a_3,\dots,a_r\} $}
+\end{enumerate}
+
+Os $r-ciclos$ podem ser representados como $(a_1,a_2,a_3,\dots,a_r)$ e o
+número $r$ é o comprimento do ciclo.  Os $2-ciclos$ também são chamados de
+transposição.
+
+Seja um $r-ciclo$ e um $s-ciclo$ quaisquer $\sigma-1,\sigma-2$ são ditos
+disjuntos se para todos os elementos $a \in \{1,2,3,\dots, n\}$ tem-se que
+$\sigma_1(a)=a $ ou $\sigma_2(a)=a$.  Em particular, para permutações
+disjuntas, vale a propriedade comutativa, isto é: $\sigma_1 \circ \sigma_2 =
+\sigma_2 \circ \sigma_1$.
+
+Qualquer elemento de $S_n$ é resultado da composição de transposições.
 
 \section{Heurísticas}
+
+Com base na teoria dos grupos de permutações, 
+
+\subsection{Solução inicial}
+
 \subsection{Local Search}
+
 \subsection{Iterated Local Search}
+
 \section{Experimentos}
+
 \section{Resultados}
+
+\begin{table}[htbp]
+  \noindent
+  \footnotesize
+  \centering
+  \begin{tabular*}{\linewidth}{|c|c|ccccc|ccccc|}
+    \hline 
+    & & 
+    \multicolumn{5}{c|}{Método 2} &
+    \multicolumn{5}{c|}{Método 4} \\
+    Nome da & Melhor valor & 
+    && \multicolumn{3}{c|}{Tempo (s)} &
+    && \multicolumn{3}{c|}{Tempo (s)} \\
+    instância &  conhecido & 
+    Resultado & gap(\%) & médio & máx & min &
+    Resultado & gap(\%)  & médio & máx & min 
+\\
+    \hline
+    N-be75eec & 236464 & 
+    215641 & 8 & 2.06 & 2.38 & 1.95 &
+    202257 & 14 & 0.72 & 0.57 & 0.79 
+\\
+    N-be75np & 716994 & 
+696906 & 2.80 & 5.86   & 6.11  & 5.73 &
+672690 & 6.18 & 2.18   & 2.30  & 1.86 
+\\
+    N-be75oi & 111171 & 
+106286 & 4.39 & 1.02   & 1.04  & 1.01 &
+106245 & 4.43 & 0.84   & 1.05  & 0.76 
+\\
+    N-be75tot & 980516 &
+ 941541 & 3.97 & 11.53   & 12.04  & 11.30  &
+918895 & 6.28 & 6.07   & 6.95  & 5.51 
+\\
+    N-stabu70 & 362512 & 
+327607 & 9.63 & 5.15   & 5.41  & 5.09 &
+327607 & 9.63 & 7.14   & 7.33  & 7.05 
+\\
+    N-stabu74 & 541393 &
+509895 & 5.82 & 9.61   & 9.73  & 9.52 &
+476302 & 12.02 & 2.48   & 2.54  & 2.45 
+\\
+    N-stabu75 & 553303 &
+511134 & 7.62 & 8.25   & 8.36  & 8.17 &
+511134 & 7.62 & 11.30   & 11.45  & 11.04 
+\\
+    N-t59b11xx & 209320 &
+\\
+    N-t59d11xx & 
+\\
+    N-t59f11xx
+\\
+    N-t59i11xx
+\\
+    N-t59n11xx
+\\
+    N-t65b11xx
+\\
+    N-t65d11xx
+\\
+    N-t65f11xx
+\\
+    N-t65i11xx
+\\
+    N-t65l11xx
+\\
+    N-t65n11xx
+\\
+    N-t65w11xx
+\\
+    N-t69r11xx
+\\
+    N-t70b11xx
+\\
+    N-t70d11xx
+\\
+    N-t70d11xxb
+\\
+    N-t70f11xx
+\\
+    N-t70i11xx
+\\
+    N-t70k11xx
+\\
+    N-t70l11xx
+\\
+    N-t70n11xx
+\\
+    N-t70u11xx
+\\
+    N-t70w11xx
+\\
+    N-t70x11xx
+\\
+    N-t74d11xx
+\\
+    N-t75d11xx
+\\
+    N-t75e11xx
+\\
+    N-t75i11xx
+\\
+    N-t75k11xx
+\\
+    N-t75n11xx
+\\
+    N-t75u11xx
+\\
+    N-tiw56n54
+\\
+    N-tiw56n58
+\\
+    N-tiw56n62
+\\
+    N-tiw56n66
+\\
+    N-tiw56n67
+\\
+    N-tiw56n72
+\\
+    N-tiw56r54
+\\
+    N-tiw56r58
+\\
+    N-tiw56r66
+\\
+    N-tiw56r67
+\\
+    N-tiw56r72
+\\
+    N-usa79
+\\
+
+\hline
+  \end{tabular*}
+  \caption{Instâncias IO}
+\end{table}
+
+\begin{table}[htbp]
+  \noindent
+  \footnotesize
+  \centering
+  \begin{tabular*}{\linewidth}{|c|c|ccccc|ccccc|}
+    \hline 
+    &  & 
+    \multicolumn{5}{c|}{Método 2} &
+    \multicolumn{5}{c|}{Método 4} \\
+    Nome da & limites & 
+    && \multicolumn{3}{c|}{Tempo (s)} &
+    && \multicolumn{3}{c|}{Tempo (s)} \\
+    &  conhecidos & 
+    Resultado & gap(\%) & médio & máx & min &
+    Resultado & gap(\%)  & médio & máx & min 
+\\
+    \hline
+t1d100.01 & [106852,114468] &
+96176 & 15.98 & 14.32   & 14.57  & 14.13 &
+95332 & 16.72 & 7.71   & 7.88  & 7.57 \\
+t1d100.02 & [105947,114077] &
+94762 & 16.93 & 24.45   & 25.25  & 24.02
+92464 & 18.95 & 4.58   & 4.67  & 4.53 \\
+t1d100.03 & [109819,117843] &
+98035 & 16.81 & 15.65   & 15.95  & 15.40
+95305 & 19.13 & 2.95   & 3.04  & 2.90 \\
+    \hline
+  \end{tabular*}
+  \caption{Instâncias RandA1}
+\end{table}
+
 \section{Conclusão}
 
 \begin{thebibliography}{99}
-\bibitem{materialaula}
-  Thibaut Vidal,
-  \emph{Material de Aula},
-  2016
-\bibitem{sakuraba2010}
- Celso S. Sakuraba and Mutsunori Yagiura,
- \emph{Efficient local search algorithms for the linear
-ordering problem},
- International Transactions In Operational Research,
- 2010
+\bibitem{materialaula} Thibaut Vidal, \emph{Material de Aula}, 2016
 
-\bibitem{tommaso}
-  Tommaso Schiavinotto and Thomas Stützle,
-  \emph{The Linear Ordering Problem: Instances, Search
-Space Analysis and Algorithms},
-  Journal of Mathematical Modelling and Algorithms,
-  2004
+\bibitem{sakuraba2010} Celso S. Sakuraba and Mutsunori Yagiura,
+\emph{Efficient local search algorithms for the linear ordering problem},
+International Transactions In Operational Research, 2010
 
-\bibitem{algebra}
-  Arnaldo Garcia and Yves Lequain,
-  \emph{Elementos de Álgebra},
-  IMPA,
-  2005
+\bibitem{tommaso} Tommaso Schiavinotto and Thomas Stützle, \emph{The Linear
+Ordering Problem: Instances, Search Space Analysis and Algorithms}, Journal of
+Mathematical Modelling and Algorithms, 2004
+
+\bibitem{algebra} Arnaldo Garcia and Yves Lequain, \emph{Elementos de
+Álgebra}, IMPA, 2005
 
 
 \end{thebibliography}
 
 \end{document}
+
+
+% HW: AMD A10 4.1 GHz 
+% SO: linux ubuntu 14.04 LTS
+% PL: python 2.7
