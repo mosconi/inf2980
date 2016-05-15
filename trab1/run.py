@@ -1,10 +1,10 @@
-from instance import instance
-from permutation import permutation
+from instance import Instance
+from permutation import Permutation
 import sys
 
 if len(sys.argv)!=2:
     sys.exit("precisa passar a instancia")
-instance = instance(sys.argv[1],"bz2")
+instance = Instance(sys.argv[1],"bz2")
 
 instance.load()
 
@@ -13,24 +13,24 @@ size = instance.size()
 permutations = {}
 for i in range(size-1):
     n= "( %04u %04u )" % (i,i+1)
-    permutations[n]=permutation(size, [i, i+1])
+    permutations[n]=Permutation(size, [i, i+1])
     n= "( %04u %04u )" % (i,i+2)
-    permutations[n]=permutation(size, [i, i+1])
+    permutations[n]=Permutation(size, [i, i+1])
     n= "( %04u %04u )" % (i,i+3)
-    permutations[n]=permutation(size, [i, i+1])
+    permutations[n]=Permutation(size, [i, i+1])
 
 #caso especial de swap consecutivo (wrap)
 #n= "( %04u %04u )" % (size-1,0)
 #permutations[n]=permutation(size, [size-1, 0])
 
-id=permutation(size)
+id=Permutation(size)
 shakes1={}
 for i in range(size/4):
     s = int(size/4)
     n= "( %04u %04u %04u %04u )" % (i, i+2*s, i+s, i+3*s)
-    shakes1[n]=permutation(size,   [i, i+2*s, i+s, i+3*s])
+    shakes1[n]=Permutation(size,   [i, i+2*s, i+s, i+3*s])
     n= "( %04u %04u )( %04u %04u )" % (i, i+2*s, i+1,i+2*s+1)
-    shakes1[n]=permutation(size,   {i:i+2*s, i+2*s:i, i+1:i+2*s+1,i+2*s+1:i+1})
+    shakes1[n]=Permutation(size,   {i:i+2*s, i+2*s:i, i+1:i+2*s+1,i+2*s+1:i+1})
 #    n= "( %04u %04u %04u %04u )" % (i, i+3*s, i+2*s, i+s)
 #    shakes1[n]=permutation(size,   [i, i+3*s, i+2*s, i+s])
 
