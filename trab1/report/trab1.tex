@@ -80,10 +80,8 @@ A função objetivo associada ao  grafo $G=(V,E)$, em uma determinada ordem $\pi
   f(\pi)=\sum^n_{i=1}\sum^n_{j=i+1}c_{\pi_i\pi_j}
 \end{equation}
 
-Esta função é a soma do triangulo superior de uma matrz quadrada $n\times n$
+Esta função é a soma do triangulo superior de uma matriz quadrada $n\times n$
 dos custos associados das arestas.
-
-\subsection{Teoria de grupos de permutações}
 
 Um grupo $(G,\cdot)$ é caracterizado como um conjunto $G$ de elementos e uma
 operação $\cdot$ fechada entre estes elementos:
@@ -130,6 +128,7 @@ Os elementos do conjunto do grupo $S_n$ podem ser representados na forma:
 
 Um elemento $\sigma$ é chamado de \emph{r-ciclo} de existem elementos
 distintos $a_1,a_2,a_3,\dots,a_r \in \{1,2,3,\dots, n\}$ tais que:
+
 \begin{enumerate}
 \item{$\sigma(a_i) = a_{i+1}$ para $1 \leq i < r$;}
 \item{$\sigma(a_r) = a_1$}
@@ -151,20 +150,73 @@ Qualquer elemento de $S_n$ é resultado da composição de transposições.
 
 \section{Heurísticas}
 
-Com base na teoria dos grupos de permutações, 
+Para obter a melhor solução, usou-se de heurísticas para computar bons valores
+e escolher o melhor deles.  Estes bons valores são denominados de ótimos
+locais, isto é, em uma determinada região o ótimo local é a ordem que produz o
+maior valor objetivo. De uma solução inicial, usou-se uma procura local
+(\emph{local search} ou \emph{LS}) dentro de uma vizinhança bem definida para a obtenção do
+ótimo local (\emph{local optima}). Após a obtenção de um ótimo local,
+iterou-se entre as vizinhas, usando a heurística \emph{iterated local
+  search} ou \emph{ILS}. A relação entre as vizinhanças também foi bem definido.
 
-\subsection{Solução inicial}
+Para a obtenção de uma solução inicial, usou-se um algoritmo baseado no
+algoritmo de 
+Becker descrito em \cite{tommaso}.  Nas instâncias trabalhadas erra possível
+que o denominador fosse $0$, tanto no numerador, quanto no denominador é
+acrescido de uma unidade.
 
-\subsection{Local Search}
+\begin{displaymath}
+q_i = \dfrac{1+\sum_{k=1}^nc_{ik}}{1+\sum_{k=1}^nc_{ki}}
+\end{displaymath}
 
-\subsection{Iterated Local Search}
+A vizinhança para a procura local foi definida como todos as sequências que
+estão a uma transposição de distância. E esta transposição é de somente
+elementos consecutivos, ou seja, são 2-ciclos da forma $(i,i+1)$ para $1\leq
+i<n$.  Foram implementados duas formas de cálculo do objetivo, uma primeira de
+forma canônica e a outra seguindo o calculo da diferença\cite{tommaso}.
+
+A vizinhança para o ILS, usou-se permutações que afetam $25\%$, $50\%$ ou
+$100\%$, dos e elementos, de forma bem determinada. 
+
+No local search, o critério de adoção de uma solução melhor foi usar o vizinho
+que mais melhorava o objetivo.  Para o iterated local search, também usou a
+adoção do melhor valor. Em um modelo, é realizado a exploração de todos as
+vizinhanças e em outro, a procura é interrompida após passar por um número
+pré-definido de vizinhanças sem melhorar o melhor valor.
 
 \section{Experimentos}
 
+A heurística proposta foi implementada em Python, pois é uma
+linguagem que permitiu um rápido desenvolvimento.  Os testes foram executados
+em um computador com procesasdor AMD A10 de 4GHz, 16GB de RAM e discos SSD
+SATA 6Gbps em RAID 0.  O sistema operacional utilizado foi o Ubuntu 14.04 LTS
+Server, com kernel Linux 4.2.0.  A versão do interpretador Python foi a 2.7.
+
+Foram implementados 4 modelos, sendo o primeiro sempre usando o cálculo
+completo do
+objetivo na busca local e percorrendo todas as vizinhanças no ILS. Um segundo
+modelo usa como critério a diferença de objetivo que a permutação resultará.
+Um terceiro modelo obtém um primeiro ótimo local e em seguida computa em cada
+grupo de permutações do ILS.  O quarto e último modelo possui com critério de
+parada adicional se ao analizar $50$ vizinhanças consecutivas, o objetivo da
+melhor não é melhorado.
+
+Os modelos 2 e 4 propostos foram submetidos aos datasets IO\cite{ds_io},
+RandA1\cite{ds_randa1} e Yagiura\cite{ds_yagiura}.
+
 \section{Resultados}
+
+Os resultados dos modelos 2 e 4 contra o dataset IO são mostrados na tabela
+\ref{table:io}.
+Os resultados dos modelos 2 e 4 contra o dataset RandA1 são mostrados na tabela
+\ref{table:randa1}.
+Os resultados dos modelos 2 e 4 contra o dataset Yagiura são mostrados na tabela
+\ref{table:yagiura}.
+
 
 \afterpage{
 \clearpage
+\newgeometry{left=2cm,right=2cm,top=2.5cm,bottom=2.5cm,footnotesep=0.5cm}
 \thispagestyle{empty} 
 \begin{table}[htbp]
   \noindent
@@ -253,12 +305,22 @@ Com base na teoria dos grupos de permutações,
 
 \\
     N-t65l11xx & 16719 &
+16410 & 1.85 & 0.51   & 0.51  & 0.51 
+&
+16410 & 1.85 & 0.52   & 0.53  & 0.51 
 \\
     N-t65n11xx & 32157 &
+31211 & 2.94 & 2.33   & 2.54  & 2.24 
+&
+30462 & 5.27 & 0.63   & 0.65  & 0.62 
 \\
     N-t65w11xx & 138181029 &
+132093649 & 4.41 & 4.82   & 4.95  & 4.75 &
+132093649 & 4.41 & 4.88   & 5.03  & 4.79 
 \\
     N-t69r11xx & 771149 &
+736696 & 4.47 & 0.90   & 0.95  & 0.89  &
+736696 & 4.47 & 0.91   & 0.93  & 0.90 
 \\
     N-t70b11xx & 528419 &
 \\
@@ -338,9 +400,15 @@ Com base na teoria dos grupos de permutações,
 \hline
   \end{tabular}
   \caption{Instâncias IO}
+  \label{table:io}
 \end{table}
+\restoregeometry
 \clearpage
 }
+\afterpage{
+\clearpage
+\newgeometry{left=2cm,right=2cm,top=2.5cm,bottom=2.5cm,footnotesep=0.5cm}
+\thispagestyle{empty} 
 \begin{table}[htbp]
   \noindent
   \footnotesize
@@ -370,9 +438,54 @@ t1d100.03 & [109819,117843] &
     \hline
   \end{tabular*}
   \caption{Instâncias RandA1}
+  \label{table:randa1}
 \end{table}
+\restoregeometry
+\clearpage
+}
+
+\afterpage{
+\clearpage
+\newgeometry{left=2cm,right=2cm,top=2.5cm,bottom=2.5cm,footnotesep=0.5cm}
+\thispagestyle{empty} 
+\begin{table}[htbp]
+  \noindent
+  \footnotesize
+  \centering
+  \begin{tabular*}{\linewidth}{|c|c|ccccc|ccccc|}
+    \hline 
+    &  & 
+    \multicolumn{5}{c|}{Método 2} &
+    \multicolumn{5}{c|}{Método 4} \\
+    Nome da & limites & 
+    && \multicolumn{3}{c|}{Tempo (s)} &
+    && \multicolumn{3}{c|}{Tempo (s)} \\
+    &  conhecidos & 
+    Resultado & gap(\%) & médio & máx & min &
+    Resultado & gap(\%)  & médio & máx & min 
+\\
+    \hline
+t1d100.01 & [106852,114468] &
+96176 & 15.98 & 14.32   & 14.57  & 14.13 &
+95332 & 16.72 & 7.71   & 7.88  & 7.57 \\
+t1d100.02 & [105947,114077] &
+94762 & 16.93 & 24.45   & 25.25  & 24.02
+92464 & 18.95 & 4.58   & 4.67  & 4.53 \\
+t1d100.03 & [109819,117843] &
+98035 & 16.81 & 15.65   & 15.95  & 15.40
+95305 & 19.13 & 2.95   & 3.04  & 2.90 \\
+    \hline
+  \end{tabular*}
+  \caption{Instâncias Yagiura}
+  \label{table:yagiura}
+\end{table}
+\restoregeometry
+\clearpage
+}
 
 \section{Conclusão}
+
+A escolha das relações entre as vizinhanças não 
 
 \begin{thebibliography}{99}
 \bibitem{materialaula} Thibaut Vidal, \emph{Material de Aula}, 2016
@@ -387,6 +500,16 @@ Mathematical Modelling and Algorithms, 2004
 
 \bibitem{algebra} Arnaldo Garcia and Yves Lequain, \emph{Elementos de
 Álgebra}, IMPA, 2005
+
+\bibitem{ds_io}
+\url{http://www.optsicom.es/lolib/lop/IO.zip}
+
+\bibitem{ds_randa1}
+\url{http://www.optsicom.es/lolib/lop/RandA1.zip}
+
+\bibitem{ds_yagiura}
+\url{http://www.al.cm.is.nagoya-u.ac.jp/~yagiura/lop/}
+
 
 
 \end{thebibliography}
