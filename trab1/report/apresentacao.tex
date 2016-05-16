@@ -1,0 +1,77 @@
+\documentclass{beamer}
+
+
+\usepackage{url}
+\usepackage{amsmath} 
+\usepackage{amsthm} 
+\usepackage{amssymb}
+\usepackage[utf8]{inputenc}
+\usepackage[brazil]{babel}
+\usepackage{graphicx}
+\usepackage{tikz}
+\usepackage{tkz-graph}
+\usetikzlibrary{matrix,arrows,decorations.pathmorphing}
+\usepackage{pdflscape}
+\usepackage{afterpage}
+\usepackage{tabularx}
+
+\author{Rodrigo Mosconi}
+\title{Linear Ordering Problem}
+
+\date{16 de Maio de 2016}
+
+\makeindex
+\begin{document}
+
+\maketitle
+
+\begin{frame}{Problema}
+\end{frame}
+
+\begin{frame}{Modelo}
+\begin{itemize}
+\item Matrizes estáticas
+\item Uso de mapas 
+\item Procurou-se usar conceitos de teoria de grupos
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Heurísticas utilizadas}
+\framesubtitle{Solução inicial}
+\begin{itemize}
+\item Baseado no algortimo de Becker
+\item O algoritmo não funciona se existirem linha nulas
+\item Adicionado uma constante
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Heurísticas utilizadas}
+\framesubtitle{Local Search}
+\begin{itemize}
+\item As vizinhanças são 2-ciclos (alguns)
+\item Cálculo do objetivo pode ser eficiente
+\item Opta pelo melhor vizinho
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Heurísticas utilizadas}
+\framesubtitle{Iterated Local Search}
+\begin{itemize}
+\item Operação semelhante ao Local search
+\item Diferencia a função objetivo e as vizinhanças
+\item Vizinhanças são permutações não triviais
+\item Opta pela melhor vizinhança
+\item Pode interromper a procura prematuramente
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Implementação, experimentos e resultados}
+\begin{itemize}
+\item Implementado em Python
+\item Dois modelos de ILS
+\item Resultados não satisfatórios
+\item Código e resultados em \url{https://github.com/mosconi/inf2980.git}
+\end{itemize}
+\end{frame}
+
+\end{document}
